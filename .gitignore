@@ -1,7 +1,40 @@
+# ================================================================
+# ☕ Velvet & Bean Café Management System — Git Ignore Rules
+# Layman Explanation:
+# The .gitignore file tells Git (our code version control system)
+# which files and folders should NEVER be uploaded or tracked.
+# This keeps our project lightweight, fast, and secure.
+# ================================================================
+
+# 1. DEPENDENCY FOLDER (Massive external packages)
+# Layman Explanation:
+# The 'node_modules/' folder contains thousands of third-party helper libraries.
+# Uploading it to GitHub would waste hundreds of megabytes of space.
+# Instead, developers just download 'package.json' and run 'npm install'
+# to automatically recreate this folder in seconds.
 node_modules/
+
+# 2. PRIVATE ENVIRONMENT CREDENTIALS & SECRETS
+# Layman Explanation:
+# The '.env' file contains private database passwords, port numbers,
+# and secret keys. If this file were pushed to GitHub, hackers could
+# see the database password and compromise the café's database!
 .env
+
+# 3. DEBUG & ERROR LOGS (Temporary clutter)
+# Layman Explanation:
+# When npm or yarn encounters an error, it creates temporary log files.
+# These logs are only useful on your own machine during troubleshooting
+# and should not clutter the shared codebase.
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# 4. OPERATING SYSTEM ARTIFACTS
+# Layman Explanation:
+# macOS Finder (.DS_Store) and Windows Explorer (Thumbs.db) automatically
+# create hidden preview files for folder icon positions and thumbnails.
+# These have nothing to do with programming and are safely ignored.
 .DS_Store
 Thumbs.db
+

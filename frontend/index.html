@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Velvet & Bean Café — Full-Stack DBMS Architecture</title>
+  <meta name="description" content="Velvet & Bean Café Management System — Modern Full-Stack DBMS with MySQL 8.0, Express.js backend, and vanilla frontend.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============================================================ -->
+  <!-- 🌟 CUSTOMER STOREFRONT (CUSTOMER POINT OF VIEW)              -->
+  <!-- ============================================================ -->
+  <div id="customer-portal" class="customer-portal-view">
+    <!-- Top Customer Navbar -->
+    <header class="cust-navbar">
+      <div class="cust-nav-left">
+        <div class="cust-brand-logo">☕</div>
+        <div class="cust-brand-info">
+          <div class="cust-brand-title">Velvet & Bean</div>
+          <div class="cust-brand-tagline">Artisan Roastery & Café</div>
+        </div>
+      </div>
+
+      <nav class="cust-nav-links">
+        <button class="cust-nav-btn active" data-cust-tab="menu" id="cust-nav-menu">
+          <span>☕</span> <span>Menu & Order</span>
+        </button>
+        <button class="cust-nav-btn" data-cust-tab="reservation" id="cust-nav-reservation">
+          <span>🪑</span> <span>Book a Table</span>
+        </button>
+        <button class="cust-nav-btn" data-cust-tab="track" id="cust-nav-track">
+          <span>🔍</span> <span>Track Order</span>
+        </button>
+        <button class="cust-nav-btn" data-cust-tab="about" id="cust-nav-about">
+          <span>✨</span> <span>Café Story</span>
+        </button>
+      </nav>
+
+      <div class="cust-nav-right">
+        <!-- Floating Cart Trigger Button -->
+        <button class="cust-cart-btn" id="btn-open-cust-cart">
+          <span class="cart-icon">🛒</span>
+          <span class="cart-text">Cart</span>
+          <span class="cust-cart-badge" id="cust-cart-badge">0</span>
+          <span class="cust-cart-total" id="cust-cart-header-total">₹0</span>
+        </button>
+
+        <!-- Customer Login/Register Button or User Profile -->
+        <div id="cust-auth-widget">
+          <button class="cust-auth-btn" id="btn-cust-login">
+            <span>👤</span>
+            <span id="cust-login-btn-text">Sign In</span>
+          </button>
+        </div>
+
+        <!-- Staff / Back-Office Switcher -->
+        <button class="cust-staff-switch-btn" id="btn-switch-to-management" title="Access Staff Operations, Inventory, & POS">
+          <span>🔒</span>
+          <span>Staff Portal</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="cust-hero">
+      <div class="cust-hero-content">
+        <div class="cust-hero-badge">🌿 Handcrafted Specialty Café & Bakery</div>
+        <h1 class="cust-hero-headline">Sip the Craft, Taste the Tradition.</h1>
+        <p class="cust-hero-sub">Freshly roasted single-origin coffees, slow-fermented artisan paninis, stone-baked pasta, and golden warm cookies right out of our ovens.</p>
+        
+        <div class="cust-hero-actions">
+          <button class="cust-btn-primary" id="hero-btn-menu">
+            <span>☕</span>
+            <span>Explore Menu & Order</span>
+          </button>
+          <button class="cust-btn-secondary" id="hero-btn-res">
+            <span>🪑</span>
+            <span>Reserve a Table</span>
+          </button>
+        </div>
+
+        <div class="cust-hero-features">
+          <div class="cust-feature-pill"><span>☕</span> 100% Arabica Beans</div>
+          <div class="cust-feature-pill"><span>🍝</span> Authentic Italian Pasta</div>
+          <div class="cust-feature-pill"><span>🍪</span> Fresh Oven Cookies</div>
+          <div class="cust-feature-pill"><span>⚡</span> 10-Min Fast Table Delivery</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Customer Body Content -->
+    <main class="cust-main-content">
+      <!-- 1. CUSTOMER TAB: MENU & ORDERING -->
+      <section class="cust-tab-section active" id="cust-view-menu">
+        <div class="cust-section-header">
+          <div>
+            <h2 class="cust-section-title">Artisanal Café Menu</h2>
+            <p class="cust-section-sub">Choose your favorite treats and order directly to your table or for takeaway.</p>
+          </div>
+          <!-- Search Bar -->
+          <div class="cust-search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="cust-search-input" placeholder="Search coffees, pasta, sandwiches, cookies..." class="cust-search-input">
+          </div>
+        </div>
+
+        <!-- Category Filter Tabs: Coffees, Pasta, Sandwiches, Cookies, Eatables -->
+        <div class="cust-category-pills" id="cust-category-pills">
+          <button class="cust-cat-pill active" data-cat="all">All Items</button>
+          <button class="cust-cat-pill" data-cat="coffees">☕ Coffees</button>
+          <button class="cust-cat-pill" data-cat="pasta">🍝 Pasta Variety</button>
+          <button class="cust-cat-pill" data-cat="sandwiches">🥪 Sandwiches</button>
+          <button class="cust-cat-pill" data-cat="cookies">🍪 Cookies Variety</button>
+          <button class="cust-cat-pill" data-cat="eatables">🥐 Bakery & Eatables</button>
+        </div>
+
+        <!-- Visual Menu Cards Grid -->
+        <div class="cust-menu-grid" id="cust-menu-grid">
+          <!-- Populated dynamically via JS with real photography -->
+        </div>
+      </section>
+
+      <!-- 2. CUSTOMER TAB: TABLE RESERVATION -->
+      <section class="cust-tab-section" id="cust-view-reservation">
+        <div class="cust-reservation-wrapper">
+          <div class="cust-reservation-card glass-card">
+            <div class="cust-res-header">
+              <span class="cust-res-icon">🪑</span>
+              <div>
+                <h2 class="cust-section-title">Reserve an Artisanal Table</h2>
+                <p class="cust-section-sub">Skip waiting — enjoy our curated ambiance with friends, family, or work.</p>
+              </div>
+            </div>
+
+            <form id="form-cust-reservation" class="cust-reservation-form">
+              <div class="cust-form-row">
+                <div class="cust-form-group">
+                  <label class="form-label" for="cust-res-name">Full Name *</label>
+                  <input type="text" id="cust-res-name" class="form-control" placeholder="e.g. Maya Patel" required>
+                </div>
+                <div class="cust-form-group">
+                  <label class="form-label" for="cust-res-phone">Mobile Number *</label>
+                  <input type="tel" id="cust-res-phone" class="form-control" placeholder="e.g. 9876543210" required>
+                </div>
+              </div>
+
+              <div class="cust-form-row">
+                <div class="cust-form-group">
+                  <label class="form-label" for="cust-res-guests">Number of Guests</label>
+                  <select id="cust-res-guests" class="form-control">
+                    <option value="1">1 Person (Solo Coffee/Work)</option>
+                    <option value="2" selected>2 People (Cozy Duo)</option>
+                    <option value="4">4 People (Family/Friends)</option>
+                    <option value="6">6 People (Celebration)</option>
+                    <option value="8">8+ People (Group Gathering)</option>
+                  </select>
+                </div>
+                <div class="cust-form-group">
+                  <label class="form-label" for="cust-res-zone">Preferred Seating Zone</label>
+                  <select id="cust-res-zone" class="form-control">
+                    <option value="Patio">🌿 Garden Patio (Outdoor Breeze)</option>
+                    <option value="Window" selected>🪟 Sunlit Window (Street View)</option>
+                    <option value="Lounge">🛋️ Cozy Lounge (Warm & Quiet)</option>
+                    <option value="Indoor">🍽️ Main Dining Hall (Central)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="cust-form-row">
+                <div class="cust-form-group">
+                  <label class="form-label" for="cust-res-date">Reservation Date</label>
+                  <input type="date" id="cust-res-date" class="form-control" required>
+                </div>
+                <div class="cust-form-group">
+                  <label class="form-label" for="cust-res-time">Preferred Time Slot</label>
+                  <select id="cust-res-time" class="form-control">
+                    <option value="09:00:00">09:00 AM (Morning Brew & Breakfast)</option>
+                    <option value="11:30:00">11:30 AM (Late Morning Brunch)</option>
+                    <option value="13:30:00" selected>01:30 PM (Artisan Lunch)</option>
+                    <option value="16:30:00">04:30 PM (High Tea & Cookies)</option>
+                    <option value="19:00:00">07:00 PM (Evening Dinner)</option>
+                    <option value="21:00:00">09:00 PM (Late Night Dessert)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="cust-form-group">
+                <label class="form-label" for="cust-res-notes">Special Occasion / Requests (Optional)</label>
+                <input type="text" id="cust-res-notes" class="form-control" placeholder="e.g. Birthday celebration, high chair needed, quiet corner">
+              </div>
+
+              <button type="submit" class="cust-btn-primary" style="width: 100%; margin-top: 10px;">
+                <span>✨</span>
+                <span>Confirm Instant Table Reservation</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Side info: Ambiance & Perks -->
+          <div class="cust-res-info-card glass-card">
+            <h3 style="color: var(--coffee-accent); margin-bottom: 12px;">🌟 Why Dine With Us?</h3>
+            <div class="res-feature-item">
+              <span class="feature-icon">⚡</span>
+              <div>
+                <strong>Instant Confirmation</strong>
+                <p>Database triggers instantly sync and reserve your table in our live floor system.</p>
+              </div>
+            </div>
+            <div class="res-feature-item">
+              <span class="feature-icon">📶</span>
+              <div>
+                <strong>High-Speed Wi-Fi & Plugs</strong>
+                <p>Work seamlessly with 200 Mbps fiber internet and dedicated charging points at every window table.</p>
+              </div>
+            </div>
+            <div class="res-feature-item">
+              <span class="feature-icon">🎂</span>
+              <div>
+                <strong>Celebration Friendly</strong>
+                <p>Complimentary anniversary or birthday dessert treat with every reserved dinner.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. CUSTOMER TAB: TRACK ORDER -->
+      <section class="cust-tab-section" id="cust-view-track">
+        <div class="cust-tracking-container glass-card">
+          <div class="cust-track-header">
+            <span class="cust-track-icon">🔍</span>
+            <div>
+              <h2 class="cust-section-title">Live Order Status Tracker</h2>
+              <p class="cust-section-sub">Enter your Order ID or registered Mobile Number to track your order in real-time.</p>
+            </div>
+          </div>
+
+          <div class="cust-track-search-bar">
+            <input type="text" id="cust-track-input" class="form-control" placeholder="Enter Order ID (e.g. 101) or Mobile (9876543210)">
+            <button class="cust-btn-primary" id="btn-cust-track-submit">Track Order</button>
+          </div>
+
+          <div id="cust-track-results" class="cust-track-results">
+            <!-- Populated via JS -->
+            <div class="track-placeholder">
+              <span>☕</span>
+              <p>Enter your Order ID above to see live preparation progress, bills, and pickup status.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. CUSTOMER TAB: ABOUT & CAFÉ STORY -->
+      <section class="cust-tab-section" id="cust-view-about">
+        <div class="cust-about-grid">
+          <div class="glass-card cust-about-card">
+            <h2 style="color: var(--coffee-accent); margin-bottom: 14px;">The Velvet & Bean Story</h2>
+            <p style="color: var(--crema-muted); line-height: 1.7; margin-bottom: 14px;">
+              Founded in 2024, Velvet & Bean was born from a deep reverence for small-batch coffee roasting, traditional slow food, and genuine hospitality. We source 100% single-estate Arabica coffee beans directly from fair-trade farmers in the Western Ghats and roast them on-site every morning.
+            </p>
+            <p style="color: var(--crema-muted); line-height: 1.7;">
+              Our kitchen prepares fresh hand-rolled pastas, stone-pressed panini sandwiches, and buttery French pastries from scratch daily without artificial additives or preservatives.
+            </p>
+          </div>
+
+          <div class="glass-card cust-about-card">
+            <h3 style="color: var(--coffee-accent); margin-bottom: 14px;">📍 Café Details & Hours</h3>
+            <ul class="cust-about-list">
+              <li><strong>⏰ Hours:</strong> Monday – Sunday: 8:00 AM – 11:00 PM</li>
+              <li><strong>📍 Location:</strong> 42 Artisan Boulevard, Indiranagar, Bangalore</li>
+              <li><strong>📞 Phone:</strong> +91 (80) 2525-BEANS</li>
+              <li><strong>📶 Free Wi-Fi:</strong> VelvetBean_Guest (Password: <code>velvetcoffee2026</code>)</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Slide-in Customer Cart Drawer -->
+    <div class="cust-cart-backdrop" id="cust-cart-backdrop"></div>
+    <aside class="cust-cart-drawer" id="cust-cart-drawer">
+      <div class="cust-cart-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.3rem;">🛒</span>
+          <h3>Your Café Order</h3>
+        </div>
+        <button class="cust-cart-close" id="btn-close-cust-cart">&times;</button>
+      </div>
+
+      <!-- Cart Items List -->
+      <div class="cust-cart-items" id="cust-cart-items">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Order Options & Checkout Form -->
+      <div class="cust-cart-footer">
+        <div class="cust-cart-options">
+          <div class="cust-form-group">
+            <label class="form-label">Order Type</label>
+            <div class="cust-order-type-toggle">
+              <button type="button" class="cust-type-btn active" data-type="Dine-In" id="cust-type-dinein">🍽️ Dine-In</button>
+              <button type="button" class="cust-type-btn" data-type="Takeaway" id="cust-type-takeaway">🛍️ Takeaway</button>
+            </div>
+          </div>
+
+          <div class="cust-form-group" id="cust-table-selector-group">
+            <label class="form-label" for="cust-order-table">Your Table Number</label>
+            <select id="cust-order-table" class="form-control">
+              <option value="1">Table 1 — Window Corner (2 Seats)</option>
+              <option value="2">Table 2 — Garden Patio (4 Seats)</option>
+              <option value="3">Table 3 — Garden Patio (4 Seats)</option>
+              <option value="4">Table 4 — Main Hall (6 Seats)</option>
+              <option value="5">Table 5 — Main Hall (2 Seats)</option>
+              <option value="6">Table 6 — Cozy Lounge (4 Seats)</option>
+              <option value="7">Table 7 — Bar Counter (1 Seat)</option>
+              <option value="8">Table 8 — Terrace View (4 Seats)</option>
+            </select>
+          </div>
+
+          <div class="cust-form-row">
+            <div class="cust-form-group">
+              <label class="form-label" for="cust-order-name">Your Name</label>
+              <input type="text" id="cust-order-name" class="form-control" placeholder="Maya Patel" required>
+            </div>
+            <div class="cust-form-group">
+              <label class="form-label" for="cust-order-phone">Mobile No.</label>
+              <input type="tel" id="cust-order-phone" class="form-control" placeholder="9876543210" required>
+            </div>
+          </div>
+
+          <div class="cust-form-group">
+            <label class="form-label" for="cust-order-payment">Payment Method</label>
+            <select id="cust-order-payment" class="form-control">
+              <option value="UPI">📱 UPI (GPay / PhonePe / Paytm)</option>
+              <option value="Credit Card">💳 Credit / Debit Card</option>
+              <option value="Cash">💵 Pay Cash at Counter</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Bill Summary -->
+        <div class="cust-bill-breakdown">
+          <div class="bill-row">
+            <span>Subtotal:</span>
+            <span id="cust-bill-subtotal">₹0.00</span>
+          </div>
+          <div class="bill-row">
+            <span>Café GST (5%):</span>
+            <span id="cust-bill-tax">₹0.00</span>
+          </div>
+          <div class="bill-row bill-total-row">
+            <span>Total Payable:</span>
+            <span id="cust-bill-total">₹0.00</span>
+          </div>
+        </div>
+
+        <button class="cust-btn-primary" id="btn-cust-place-order" style="width: 100%; font-size: 1.05rem;">
+          <span>✅</span>
+          <span>Confirm & Place Order</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Customer Footer -->
+    <footer class="cust-footer">
+      <div class="cust-footer-content">
+        <div class="cust-footer-brand">
+          <div style="font-size: 1.2rem; font-weight: 700; color: var(--coffee-accent);">☕ Velvet & Bean Coffee Co.</div>
+          <p style="font-size: 0.85rem; color: var(--cream-dim);">Artisanal Roastery, Italian Kitchen & Fresh Bakery.</p>
+        </div>
+        <div class="cust-footer-links">
+          <a href="#" id="foot-link-menu">Menu</a>
+          <a href="#" id="foot-link-res">Reservations</a>
+          <a href="#" id="foot-link-track">Track Order</a>
+          <a href="#" id="foot-link-about">Our Story</a>
+        </div>
+        <div>
+          <button class="cust-staff-switch-btn" id="btn-foot-management">
+            <span>🔒</span>
+            <span>Switch to Staff / Management Portal</span>
+          </button>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- ⚙️ STAFF & MANAGEMENT PORTAL (BACK-OFFICE OPERATIONS)       -->
+  <!-- ============================================================ -->
+  <div class="app-container" id="management-portal" style="display: none;">
+    <!-- ============================================================ -->
+    <!-- 1. SIDEBAR NAVIGATION -->
+    <!-- ============================================================ -->
+    <aside class="sidebar">
+      <div class="brand-section">
+        <div class="brand-icon-box">☕</div>
+        <div>
+          <h1 class="brand-title">Velvet & Bean</h1>
+          <span class="brand-badge">Full-Stack DBMS</span>
+        </div>
+      </div>
+
+      <nav class="nav-menu">
+        <div class="nav-category-title">STOREFRONT</div>
+        <div class="nav-item nav-item-back" id="nav-item-customer-portal">
+          <span class="nav-icon">☕</span>
+          <span style="font-weight: 600; color: var(--coffee-accent);">Exit to Customer View</span>
+        </div>
+
+        <div class="nav-category-title">OPERATIONS</div>
+        <div class="nav-item active" data-tab="dashboard" id="nav-dashboard">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </div>
+        <div class="nav-item" data-tab="pos" id="nav-pos">
+          <span class="nav-icon">🛒</span>
+          <span>Point of Sale (POS)</span>
+          <span class="nav-counter" id="nav-cart-count">0</span>
+        </div>
+        <div class="nav-item" data-tab="orders" id="nav-orders">
+          <span class="nav-icon">📋</span>
+          <span>Orders & Bills</span>
+        </div>
+
+        <div class="nav-category-title">MANAGEMENT</div>
+        <div class="nav-item" data-tab="menu" id="nav-menu">
+          <span class="nav-icon">☕</span>
+          <span>Menu Catalog</span>
+        </div>
+        <div class="nav-item" data-tab="tables" id="nav-tables">
+          <span class="nav-icon">🪑</span>
+          <span>Tables & Bookings</span>
+        </div>
+        <div class="nav-item" data-tab="inventory" id="nav-inventory">
+          <span class="nav-icon">📦</span>
+          <span>Inventory Tracker</span>
+          <span class="nav-counter" id="nav-lowstock-count" style="display:none; background: var(--status-occupied); color:#fff;">0</span>
+        </div>
+        <div class="nav-item" data-tab="customers" id="nav-customers">
+          <span class="nav-icon">👥</span>
+          <span>Customer Directory</span>
+        </div>
+        <div class="nav-item" data-tab="staff" id="nav-staff">
+          <span class="nav-icon">👨‍🍳</span>
+          <span>Staff Directory</span>
+        </div>
+
+        <div class="nav-category-title">ACCOUNT & SECURITY</div>
+        <div class="nav-item" data-tab="auth" id="nav-auth">
+          <span class="nav-icon">🔐</span>
+          <span>Login / Register</span>
+        </div>
+
+        <div class="nav-category-title">ACADEMIC & FACULTY</div>
+        <div class="nav-item" data-tab="sql" id="nav-sql">
+          <span class="nav-icon">⚡</span>
+          <span>SQL Demo Lab</span>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status-indicator">
+          <div class="status-dot" id="db-status-dot"></div>
+          <div>
+            <div style="font-weight: 600; font-size: 0.8rem;" id="db-status-text">MySQL: Connecting...</div>
+            <div style="font-size: 0.7rem; color: var(--cream-dim);" id="db-host-text">Port 3306 • cafe_management</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ============================================================ -->
+    <!-- 2. MAIN VIEWPORT -->
+    <!-- ============================================================ -->
+    <main class="main-wrapper">
+      <!-- Top Sticky Header -->
+      <header class="top-header">
+        <div class="header-breadcrumbs">
+          <span class="breadcrumb-path">Velvet & Bean Coffee Co. / System</span>
+          <h2 class="breadcrumb-page" id="header-page-title">Executive Dashboard</h2>
+        </div>
+
+        <div class="header-actions">
+          <!-- Back to Customer Storefront Button -->
+          <button class="quick-btn quick-btn-accent" id="btn-back-to-customer" title="Return to Public Customer View">
+            <span>☕</span>
+            <span>Customer View</span>
+          </button>
+
+          <!-- User Profile & Authentication Status Widget -->
+          <div class="header-auth-container" id="header-auth-container">
+            <!-- Dynamically populated by JS: either Sign In button or User Profile Pill -->
+          </div>
+
+          <button class="quick-btn quick-btn-outline" id="btn-quick-sql">
+            <span>⚡</span>
+            <span>Faculty SQL Lab</span>
+          </button>
+          <button class="quick-btn quick-btn-primary" id="btn-quick-new-order">
+            <span>➕</span>
+            <span>New POS Order</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Viewport Body -->
+      <div class="content-body">
+
+        <!-- ======================================================== -->
+        <!-- TAB 1: DASHBOARD -->
+        <!-- ======================================================== -->
+        <section class="view-section active" id="view-dashboard">
+          <!-- KPI Metrics Cards -->
+          <div class="kpi-grid">
+            <div class="glass-card kpi-card">
+              <div class="kpi-icon">💰</div>
+              <div class="kpi-info">
+                <span class="kpi-label">Gross Revenue</span>
+                <span class="kpi-value" id="kpi-revenue">₹0.00</span>
+                <span class="kpi-sub" id="kpi-tax-sub">Incl. 5% GST</span>
+              </div>
+            </div>
+
+            <div class="glass-card kpi-card">
+              <div class="kpi-icon">🧾</div>
+              <div class="kpi-info">
+                <span class="kpi-label">Total Orders</span>
+                <span class="kpi-value" id="kpi-orders">0</span>
+                <span class="kpi-sub" id="kpi-orders-sub">All transactions</span>
+              </div>
+            </div>
+
+            <div class="glass-card kpi-card">
+              <div class="kpi-icon">☕</div>
+              <div class="kpi-info">
+                <span class="kpi-label">Active Orders</span>
+                <span class="kpi-value" id="kpi-active-orders">0</span>
+                <span class="kpi-sub">Kitchen in-progress</span>
+              </div>
+            </div>
+
+            <div class="glass-card kpi-card">
+              <div class="kpi-icon">⚠️</div>
+              <div class="kpi-info">
+                <span class="kpi-label">Low Stock Alerts</span>
+                <span class="kpi-value" id="kpi-low-stock" style="color: var(--status-warning);">0</span>
+                <span class="kpi-sub">Below reorder level</span>
+              </div>
+            </div>
+
+            <div class="glass-card kpi-card">
+              <div class="kpi-icon">🪑</div>
+              <div class="kpi-info">
+                <span class="kpi-label">Table Occupancy</span>
+                <span class="kpi-value" id="kpi-table-avail">0 / 0</span>
+                <span class="kpi-sub">Available tables</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Grid: Bestsellers & Recent Orders -->
+          <div class="dashboard-grid">
+            <!-- Recent Orders -->
+            <div class="glass-card">
+              <div class="section-header">
+                <h3 class="section-title">
+                  <span>📋</span>
+                  <span>Recent Customer Orders</span>
+                </h3>
+                <button class="quick-btn quick-btn-outline" onclick="switchTab('orders')" style="padding: 6px 14px; font-size: 0.78rem;">View All</button>
+              </div>
+
+              <div class="table-responsive">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Order #</th>
+                      <th>Customer</th>
+                      <th>Type</th>
+                      <th>Amount (₹)</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboard-recent-orders">
+                    <tr><td colspan="6" style="text-align: center; color: var(--cream-dim);">Loading orders...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Bestseller Menu Items -->
+            <div class="glass-card">
+              <div class="section-header">
+                <h3 class="section-title">
+                  <span>🏆</span>
+                  <span>Top Bestsellers</span>
+                </h3>
+                <span class="badge badge-coffee">Volume & Sales</span>
+              </div>
+
+              <div id="dashboard-bestsellers-list">
+                <div style="text-align: center; color: var(--cream-dim); padding: 30px;">Loading bestsellers...</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- TAB 2: POINT OF SALE (POS) -->
+        <!-- ======================================================== -->
+        <section class="view-section" id="view-pos">
+          <div class="pos-layout">
+            <!-- Left Catalog Column -->
+            <div class="pos-catalog-panel">
+              <!-- Search & Filters -->
+              <div style="display: flex; gap: 14px; align-items: center; flex-wrap: wrap;">
+                <div class="search-input-wrapper" style="flex: 1; min-width: 240px;">
+                  <span class="search-icon">🔍</span>
+                  <input type="text" id="pos-search-input" class="search-field" placeholder="Search coffee, pastries, snacks...">
+                </div>
+              </div>
+
+              <!-- Category Tabs -->
+              <div class="category-tabs" id="pos-category-tabs">
+                <div class="cat-tab active" data-category="ALL">All Items</div>
+                <div class="cat-tab" data-category="Beverages">☕ Beverages</div>
+                <div class="cat-tab" data-category="Breakfast">🍳 Breakfast</div>
+                <div class="cat-tab" data-category="Main Course">🍛 Main Course</div>
+                <div class="cat-tab" data-category="Snacks">🥪 Snacks</div>
+                <div class="cat-tab" data-category="Dessert">🍰 Dessert</div>
+              </div>
+
+              <!-- Menu Items Grid -->
+              <div class="menu-grid" id="pos-menu-grid">
+                <div style="grid-column: 1/-1; text-align: center; color: var(--cream-dim); padding: 40px;">Loading menu items...</div>
+              </div>
+            </div>
+
+            <!-- Right Cart & Billing Drawer -->
+            <div class="pos-cart-panel">
+              <div class="cart-header">
+                <h3 class="cart-title">
+                  <span>🛒</span>
+                  <span>Order Cart</span>
+                </h3>
+                <span class="cart-badge" id="cart-item-badge">0 items</span>
+              </div>
+
+              <!-- Customer & Server Config -->
+              <div class="cart-settings-group">
+                <div>
+                  <label class="form-label" for="cart-customer-select">Select Customer</label>
+                  <select id="cart-customer-select" class="form-control">
+                    <!-- Populated dynamically -->
+                  </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                  <div>
+                    <label class="form-label" for="cart-staff-select">Server / Staff</label>
+                    <select id="cart-staff-select" class="form-control">
+                      <!-- Populated dynamically -->
+                    </select>
+                  </div>
+                  <div>
+                    <label class="form-label" for="cart-order-type">Order Type</label>
+                    <select id="cart-order-type" class="form-control">
+                      <option value="Dine-In">Dine-In</option>
+                      <option value="Takeaway">Takeaway</option>
+                      <option value="Online Delivery">Delivery</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div id="cart-table-group">
+                  <label class="form-label" for="cart-table-select">Dining Table</label>
+                  <select id="cart-table-select" class="form-control">
+                    <!-- Populated dynamically -->
+                  </select>
+                </div>
+
+                <div>
+                  <label class="form-label" for="cart-payment-method">Payment Method</label>
+                  <select id="cart-payment-method" class="form-control">
+                    <option value="UPI">UPI (Instant QR)</option>
+                    <option value="Card">Credit / Debit Card</option>
+                    <option value="Cash">Cash at Counter</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Cart Line Items -->
+              <div class="cart-items-scroll" id="cart-items-container">
+                <div class="cart-empty-message">Your order cart is empty.<br>Click menu items on the left to add!</div>
+              </div>
+
+              <!-- Calculations -->
+              <div class="cart-summary-box">
+                <div class="summary-line">
+                  <span>Net Subtotal:</span>
+                  <span id="cart-subtotal">₹0.00</span>
+                </div>
+                <div class="summary-line">
+                  <span>5% GST Tax:</span>
+                  <span id="cart-tax">₹0.00</span>
+                </div>
+                <div class="summary-line total-line">
+                  <span>Grand Total:</span>
+                  <span id="cart-grand-total">₹0.00</span>
+                </div>
+              </div>
+
+              <!-- Submit Button -->
+              <button class="checkout-btn" id="btn-place-order" disabled>
+                <span>⚡</span>
+                <span>Place Order & Generate Bill</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- TAB 3: ORDERS & BILLS -->
+        <!-- ======================================================== -->
+        <section class="view-section" id="view-orders">
+          <div class="glass-card">
+            <div class="section-header" style="flex-wrap: wrap; gap: 14px;">
+              <h3 class="section-title">
+                <span>📋</span>
+                <span>All Orders & Financial Bills</span>
+              </h3>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <input type="text" id="orders-search-input" class="search-field" style="width: 220px;" placeholder="Search Order # or Name">
+                <select id="orders-filter-type" class="form-control" style="width: 140px;">
+                  <option value="">All Types</option>
+                  <option value="Dine-In">Dine-In</option>
+                  <option value="Takeaway">Takeaway</option>
+                  <option value="Online Delivery">Delivery</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Order #</th>
+                    <th>Date & Time</th>
+                    <th>Customer</th>
+                    <th>Server</th>
+                    <th>Type</th>
+                    <th>Items</th>
+                    <th>Subtotal</th>
+                    <th>5% GST</th>
+                    <th>Total (₹)</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-table-body">
+                  <tr><td colspan="12" style="text-align: center; color: var(--cream-dim);">Loading orders...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- TAB 4: MENU CATALOG -->
+        <!-- ======================================================== -->
+        <section class="view-section" id="view-menu">
+          <div class="glass-card">
+            <div class="section-header">
+              <h3 class="section-title">
+                <span>☕</span>
+                <span>Active Menu Catalog</span>
+              </h3>
+              <button class="quick-btn quick-btn-primary" id="btn-open-add-menu-modal">
+                <span>➕</span>
+                <span>Add Menu Item</span>
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Item ID</th>
+                    <th>Item Name</th>
+                    <th>Category</th>
+                    <th>Price (₹)</th>
+                    <th>Available Stock</th>
+                    <th>Stock Status</th>
+                    <th>Catalog State</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="menu-table-body">
+                  <tr><td colspan="8" style="text-align: center; color: var(--cream-dim);">Loading menu items...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- TAB 5: TABLES & BOOKINGS -->
+        <!-- ======================================================== -->
+        <section class="view-section" id="view-tables">
+          <div class="section-header" style="margin-bottom: 20px;">
+            <h3 class="section-title">
+              <span>🪑</span>
+              <span>Floor Plan & Dining Tables</span>
+            </h3>
+            <button class="quick-btn quick-btn-primary" id="btn-open-reservation-modal">
+              <span>📅</span>
+              <span>New Table Reservation</span>
+            </button>
+          </div>
+
+          <!-- Visual Table Grid -->
+          <div class="tables-grid" id="tables-floor-grid">
+            <!-- Populated dynamically -->
+          </div>
+
+          <!-- Reservations List -->
+          <div class="glass-card" style="margin-top: 28px;">
+            <div class="section-header">
+              <h3 class="section-title">
+                <span>📅</span>
+                <span>Customer Table Reservations</span>
+              </h3>
+            </div>
+            <div class="table-responsive">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Booking #</th>
+                    <th>Customer Name</th>
+                    <th>Phone</th>
+                    <th>Table Number</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Party Size</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="reservations-table-body">
+                  <tr><td colspan="9" style="text-align: center; color: var(--cream-dim);">Loading reservations...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- TAB 6: INVENTORY TRACKER -->
+        <!-- ======================================================== -->
+        <section class="view-section" id="view-inventory">
+          <div class="glass-card">
+            <div class="section-header">
+              <div>
+                <h3 class="section-title">
+                  <span>📦</span>
+                  <span>Kitchen Inventory & Reorder Tracker</span>
+                </h3>
+                <p style="font-size: 0.8rem; color: var(--crema-muted); margin-top: 4px;">
+                  Automatic triggers decrement stock on every ordered item. Items at or below threshold trigger reorder warnings.
+                </p>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Inv ID</th>
+                    <th>Menu Item</th>
+                    <th>Category</th>
+                    <th>Current Stock</th>
+                    <th>Reorder Level</th>
+                    <th>Shortage</th>
+                    <th>Stock Status</th>
+                    <th>Last Updated</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-table-body">
+                  <tr><td colspan="9" style="text-align: center; color: var(--cream-dim);">Loading inventory...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- TAB 7: CUSTOMER DIRECTORY -->
+        <!-- ======================================================== -->
+        <section class="view-section" id="view-customers">
+          <div class="glass-card">
+            <div class="section-header">
+              <h3 class="section-title">
+                <span>👥</span>
+                <span>Customer Directory & Spend History</span>
+              </h3>
+              <button class="quick-btn quick-btn-primary" id="btn-open-add-customer-modal">
+                <span>➕</span>
+                <span>Register Customer</span>
+              </button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Customer Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Member Since</th>
+                    <th>Orders Placed</th>
+                    <th>Lifetime Spend (₹)</th>
+                  </tr>
+                </thead>
+                <tbody id="customers-table-body">
+                  <tr><td colspan="8" style="text-align: center; color: var(--cream-dim);">Loading customers...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- TAB 8: STAFF DIRECTORY -->
+        <!-- ======================================================== -->
+        <section class="view-section" id="view-staff">
+          <div class="glass-card">
+            <div class="section-header">
+              <h3 class="section-title">
+                <span>👨‍🍳</span>
+                <span>Café Staff & Service Team</span>
+              </h3>
+            </div>
+
+            <div class="table-responsive">
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Staff Name</th>
+                    <th>Role</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Joined</th>
+                    <th>Orders Handled</th>
+                    <th>Sales Handled (₹)</th>
+                  </tr>
+                </thead>
+                <tbody id="staff-table-body">
+                  <tr><td colspan="8" style="text-align: center; color: var(--cream-dim);">Loading staff...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- TAB 9: SQL DEMO LAB (FACULTY & VIVA PRESENTATION) -->
+        <!-- ======================================================== -->
+        <section class="view-section" id="view-sql">
+          <div class="sql-lab-layout">
+            <div class="glass-card sql-selector-card">
+              <div class="section-header">
+                <div>
+                  <h3 class="section-title">
+                    <span>⚡</span>
+                    <span>Interactive DBMS Demonstration Lab</span>
+                  </h3>
+                  <p style="font-size: 0.82rem; color: var(--crema-muted); margin-top: 4px;">
+                    Select any prewritten SQL query designed for viva evaluation, or type a custom SELECT statement to execute live against MySQL 8.0.
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <label class="form-label" for="sql-preset-select">Select Demonstration Scenario</label>
+                <select id="sql-preset-select" class="form-control">
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+
+              <!-- Concept Explanation Box -->
+              <div id="sql-concept-box" style="padding: 12px 16px; border-radius: var(--radius-md); background: rgba(212, 155, 87, 0.08); border: 1px solid rgba(212, 155, 87, 0.2); font-size: 0.85rem; color: var(--crema);">
+                <strong>DBMS Concept:</strong> <span id="sql-concept-text">Multi-table JOINs, aggregations and grouping</span>
+              </div>
+
+              <!-- SQL Query Code Viewer -->
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <span class="form-label">SQL Query (MySQL 8.0)</span>
+                  <button class="quick-btn quick-btn-outline" id="btn-copy-sql" style="padding: 4px 12px; font-size: 0.75rem;">Copy SQL</button>
+                </div>
+                <div class="sql-editor-container" id="sql-editor-view">
+                  <pre><code id="sql-code-display">SELECT * FROM customers;</code></pre>
+                </div>
+              </div>
+
+              <div class="sql-actions-bar">
+                <button class="quick-btn quick-btn-primary" id="btn-execute-sql" style="padding: 12px 24px;">
+                  <span>▶️</span>
+                  <span>Execute Query Against MySQL</span>
+                </button>
+
+                <div class="sql-stats-badge" id="sql-execution-stats" style="display: none;">
+                  <span>⚡ Execution Time: <strong id="sql-timer">0 ms</strong></span>
+                  <span>•</span>
+                  <span>Rows: <strong id="sql-row-count">0</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- SQL Results Card -->
+            <div class="glass-card" id="sql-results-card">
+              <div class="section-header">
+                <h3 class="section-title">
+                  <span>📊</span>
+                  <span>Execution Output Table</span>
+                </h3>
+              </div>
+
+              <div class="table-responsive" id="sql-results-table-container">
+                <div style="text-align: center; color: var(--cream-dim); padding: 40px;">
+                  Click "Execute Query Against MySQL" above to view live results.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- TAB 10: LOGIN & REGISTRATION / ACCESS CONTROL -->
+        <!-- ======================================================== -->
+        <section class="view-section" id="view-auth">
+          <div class="auth-page-layout">
+            <!-- Left Column: Interactive Login & Registration Card -->
+            <div class="glass-card auth-main-card">
+              <div class="auth-header">
+                <div class="brand-icon-box" style="width: 48px; height: 48px; font-size: 1.5rem; margin-bottom: 10px;">🔐</div>
+                <h3 class="auth-card-title" id="auth-main-title">Café Access Control</h3>
+                <p class="auth-card-sub" id="auth-main-sub">Sign in to manage café operations or register a new staff account.</p>
+              </div>
+
+              <!-- Tab Switching Buttons (Triggers mode switch between Sign In and Register) -->
+              <div class="auth-tabs-bar">
+                <button type="button" class="auth-tab-btn active" id="auth-tab-login">
+                  <span>Sign In</span>
+                </button>
+                <button type="button" class="auth-tab-btn" id="auth-tab-register">
+                  <span>Create Account (Register)</span>
+                </button>
+              </div>
+
+              <!-- ==================================================== -->
+              <!-- 1. LOGIN FORM -->
+              <!-- ==================================================== -->
+              <form id="auth-form-login" class="auth-form-pane active">
+                <div class="form-group" style="margin-bottom: 14px;">
+                  <label class="form-label" for="login-input-user">Username or Email Address</label>
+                  <input type="text" id="login-input-user" class="form-control" placeholder="e.g. admin or admin@velvetbean.com" required autocomplete="username">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 16px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <label class="form-label" for="login-input-pass" style="margin-bottom: 0;">Password</label>
+                    <button type="button" class="pwd-toggle-btn" id="btn-toggle-login-pass">👁️ Show</button>
+                  </div>
+                  <input type="password" id="login-input-pass" class="form-control" placeholder="Enter account password" required autocomplete="current-password">
+                </div>
+
+                <!-- 1-Click Demo Login Helpers for Viva / Evaluation -->
+                <div class="quick-credentials-box">
+                  <div style="font-size: 0.75rem; color: var(--cream-dim); margin-bottom: 6px;">⚡ Quick Test Credentials (1-Click Fill):</div>
+                  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button type="button" class="pill-btn" id="btn-fill-admin-creds">Admin (admin / admin123)</button>
+                    <button type="button" class="pill-btn" id="btn-fill-staff-creds">Staff (barista / coffee123)</button>
+                  </div>
+                </div>
+
+                <button type="submit" class="quick-btn quick-btn-primary auth-action-btn" id="btn-do-login">
+                  <span>Sign In to System</span>
+                  <span>➜</span>
+                </button>
+              </form>
+
+              <!-- ==================================================== -->
+              <!-- 2. REGISTRATION FORM -->
+              <!-- ==================================================== -->
+              <form id="auth-form-register" class="auth-form-pane">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                  <div>
+                    <label class="form-label" for="reg-input-username">Username</label>
+                    <input type="text" id="reg-input-username" class="form-control" placeholder="e.g. maya_p" required autocomplete="username">
+                  </div>
+                  <div>
+                    <label class="form-label" for="reg-input-fullname">Full Name</label>
+                    <input type="text" id="reg-input-fullname" class="form-control" placeholder="e.g. Maya Patel" required>
+                  </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 12px;">
+                  <label class="form-label" for="reg-input-email">Email Address</label>
+                  <input type="email" id="reg-input-email" class="form-control" placeholder="maya.patel@velvetbean.com" required autocomplete="email">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px; margin-bottom: 12px;">
+                  <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                      <label class="form-label" for="reg-input-pass" style="margin-bottom: 0;">Password</label>
+                      <button type="button" class="pwd-toggle-btn" id="btn-toggle-reg-pass">👁️ Show</button>
+                    </div>
+                    <input type="password" id="reg-input-pass" class="form-control" placeholder="Min. 4 characters" minlength="4" required autocomplete="new-password">
+                  </div>
+                  <div>
+                    <label class="form-label" for="reg-input-role">System Role</label>
+                    <select id="reg-input-role" class="form-control" required>
+                      <option value="Staff">Staff / Barista</option>
+                      <option value="Manager">Manager</option>
+                      <option value="Cashier">Cashier</option>
+                      <option value="Admin">Administrator</option>
+                      <option value="Customer">Customer</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Input Trigger Feedback (Real-time Basic Validation) -->
+                <div class="validation-trigger-feedback" id="reg-feedback-box">
+                  <span class="status-dot" id="reg-pwd-dot" style="width: 8px; height: 8px; background: var(--crema-muted);"></span>
+                  <span id="reg-pwd-msg" style="font-size: 0.75rem; color: var(--crema-muted);">Password must be at least 4 characters</span>
+                </div>
+
+                <button type="submit" class="quick-btn quick-btn-primary auth-action-btn" id="btn-do-register" style="margin-top: 14px;">
+                  <span>Create Account (Register)</span>
+                  <span>✨</span>
+                </button>
+              </form>
+            </div>
+
+            <!-- Right Column: User Session Status, Database Trigger Logs & User Directory -->
+            <div class="auth-dashboard-column">
+              <!-- Current User Session Card -->
+              <div class="glass-card session-status-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                  <div style="display: flex; gap: 14px; align-items: center;">
+                    <div class="user-avatar-badge" id="session-user-avatar">👤</div>
+                    <div>
+                      <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold-caramel);">CURRENT SESSION</div>
+                      <div style="font-weight: 700; font-size: 1.1rem; color: var(--cream);" id="session-display-name">Guest (Demo Mode)</div>
+                      <div style="font-size: 0.78rem; color: var(--cream-dim);" id="session-display-role">Browsing as Guest — Full access allowed for grading</div>
+                    </div>
+                  </div>
+                  <div id="session-actions-wrapper">
+                    <!-- Logout button will be placed here when user is logged in -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Database Triggers Live Audit Feed -->
+              <div class="glass-card" style="margin-top: 18px;">
+                <div class="section-header">
+                  <div>
+                    <h3 class="section-title">
+                      <span>⚡</span>
+                      <span>MySQL Database Triggers in Action</span>
+                    </h3>
+                    <p style="font-size: 0.8rem; color: var(--crema-muted); margin-top: 3px;">
+                      Records automatically created by <code>trg_users_after_insert_log</code> &amp; <code>trg_users_after_update_log</code> in table <code>user_activity_logs</code>.
+                    </p>
+                  </div>
+                  <button class="quick-btn quick-btn-outline" id="btn-reload-auth-logs" style="padding: 4px 10px; font-size: 0.75rem;">🔄 Refresh Logs</button>
+                </div>
+
+                <div class="table-responsive" style="max-height: 220px; overflow-y: auto;">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>Log ID</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Trigger Audit Details</th>
+                        <th>Timestamp</th>
+                      </tr>
+                    </thead>
+                    <tbody id="auth-triggers-tbody">
+                      <!-- Dynamically filled with user_activity_logs -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Registered Accounts Directory -->
+              <div class="glass-card" style="margin-top: 18px;">
+                <div class="section-header">
+                  <div>
+                    <h3 class="section-title">
+                      <span>👥</span>
+                      <span>Registered User Accounts Directory</span>
+                    </h3>
+                    <p style="font-size: 0.8rem; color: var(--crema-muted); margin-top: 3px;">
+                      All user records stored in MySQL table <code>users</code>.
+                    </p>
+                  </div>
+                  <button class="quick-btn quick-btn-outline" id="btn-reload-auth-users" style="padding: 4px 10px; font-size: 0.75rem;">🔄 Refresh Users</button>
+                </div>
+
+                <div class="table-responsive" style="max-height: 220px; overflow-y: auto;">
+                  <table class="data-table">
+                    <thead>
+                      <tr>
+                        <th>User ID</th>
+                        <th>Username</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Last Login</th>
+                      </tr>
+                    </thead>
+                    <tbody id="auth-directory-tbody">
+                      <!-- Dynamically filled with users -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- MODALS -->
+  <!-- ============================================================ -->
+
+  <!-- 0. CUSTOMER ORDER SUCCESS MODAL -->
+  <div class="modal-backdrop" id="modal-cust-order-success">
+    <div class="modal-box" style="max-width: 480px; text-align: center;">
+      <div style="font-size: 3rem; margin-bottom: 8px;">🎉</div>
+      <h3 class="modal-title" style="color: var(--coffee-accent); margin-bottom: 6px;">Order Confirmed!</h3>
+      <p style="color: var(--crema-muted); font-size: 0.9rem; margin-bottom: 16px;">
+        Thank you for dining at Velvet & Bean! Your order has been placed and sent to our kitchen.
+      </p>
+      
+      <div id="cust-order-success-receipt" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px; text-align: left; font-size: 0.88rem;">
+        <!-- Filled dynamically with Order ID, Table, and Bill -->
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button class="quick-btn quick-btn-outline" onclick="closeModal('modal-cust-order-success')">Close</button>
+        <button class="quick-btn quick-btn-primary" id="btn-view-order-status">Track Order Live</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1. RECEIPT MODAL -->
+  <div class="modal-backdrop" id="modal-receipt">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Receipt & Bill</h3>
+        <span class="modal-close-btn" onclick="closeModal('modal-receipt')">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="receipt-paper" id="printable-receipt">
+          <div class="receipt-header">
+            <div class="receipt-logo">☕ Velvet & Bean Coffee Co.</div>
+            <div class="receipt-sub">Artisanal Coffee & Gourmet Bistro</div>
+            <div class="receipt-sub">GSTIN: 29AAAAA0000A1Z5 • Tel: +91 98765 43210</div>
+          </div>
+
+          <div class="receipt-meta">
+            <span>Order #: <strong id="rcpt-order-id">#0</strong></span>
+            <span id="rcpt-date">--</span>
+          </div>
+          <div class="receipt-meta">
+            <span>Customer: <strong id="rcpt-customer">--</strong></span>
+            <span>Type: <strong id="rcpt-type">Dine-In</strong></span>
+          </div>
+          <div class="receipt-meta">
+            <span>Server: <strong id="rcpt-server">--</strong></span>
+            <span>Txn Ref: <strong id="rcpt-txn">--</strong></span>
+          </div>
+
+          <table class="receipt-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th style="text-align: center;">Qty</th>
+                <th style="text-align: right;">Price</th>
+                <th style="text-align: right;">Total</th>
+              </tr>
+            </thead>
+            <tbody id="rcpt-items-body">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+
+          <div class="receipt-totals">
+            <div style="display: flex; justify-content: space-between;">
+              <span>Net Subtotal:</span>
+              <span id="rcpt-subtotal">₹0.00</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span>GST Tax (5%):</span>
+              <span id="rcpt-tax">₹0.00</span>
+            </div>
+            <div class="receipt-grand-total">
+              <span>Grand Total:</span>
+              <span id="rcpt-grand-total">₹0.00</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: #6d4c41; margin-top: 4px;">
+              <span>Payment Mode:</span>
+              <span id="rcpt-payment-mode">UPI Completed</span>
+            </div>
+          </div>
+
+          <div class="receipt-footer">
+            Thank you for dining with Velvet & Bean!<br>
+            Please visit again soon.
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="quick-btn quick-btn-outline" onclick="closeModal('modal-receipt')">Close</button>
+        <button class="quick-btn quick-btn-primary" onclick="window.print()">🖨️ Print Receipt</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. ADD MENU ITEM MODAL -->
+  <div class="modal-backdrop" id="modal-add-menu">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Add New Menu Item</h3>
+        <span class="modal-close-btn" onclick="closeModal('modal-add-menu')">&times;</span>
+      </div>
+      <div class="modal-body">
+        <form id="form-add-menu" style="display: flex; flex-direction: column; gap: 14px;">
+          <div>
+            <label class="form-label" for="menu-item-name">Item Name</label>
+            <input type="text" id="menu-item-name" class="form-control" required placeholder="e.g. Vanilla Bean Latte">
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label class="form-label" for="menu-item-category">Category</label>
+              <select id="menu-item-category" class="form-control" required>
+                <option value="Beverages">Beverages</option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Main Course">Main Course</option>
+                <option value="Snacks">Snacks</option>
+                <option value="Dessert">Dessert</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" for="menu-item-price">Price (₹)</label>
+              <input type="number" step="0.5" id="menu-item-price" class="form-control" required placeholder="140.00">
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+            <div>
+              <label class="form-label" for="menu-item-stock">Initial Stock</label>
+              <input type="number" id="menu-item-stock" class="form-control" value="50" required>
+            </div>
+            <div>
+              <label class="form-label" for="menu-item-unit">Unit</label>
+              <input type="text" id="menu-item-unit" class="form-control" value="Cups" required>
+            </div>
+            <div>
+              <label class="form-label" for="menu-item-reorder">Reorder Level</label>
+              <input type="number" id="menu-item-reorder" class="form-control" value="15" required>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="quick-btn quick-btn-outline" onclick="closeModal('modal-add-menu')">Cancel</button>
+        <button class="quick-btn quick-btn-primary" id="btn-submit-add-menu">Save Menu Item</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. RESTOCK MODAL -->
+  <div class="modal-backdrop" id="modal-restock">
+    <div class="modal-box" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 class="modal-title">Restock Inventory</h3>
+        <span class="modal-close-btn" onclick="closeModal('modal-restock')">&times;</span>
+      </div>
+      <div class="modal-body">
+        <form id="form-restock" style="display: flex; flex-direction: column; gap: 14px;">
+          <input type="hidden" id="restock-item-id">
+          <div>
+            <label class="form-label">Item to Restock</label>
+            <div id="restock-item-name" style="font-weight: 700; font-size: 1.1rem; color: var(--coffee-accent);">--</div>
+          </div>
+          <div>
+            <label class="form-label" for="restock-quantity">Quantity to Add</label>
+            <input type="number" id="restock-quantity" class="form-control" value="25" min="1" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="quick-btn quick-btn-outline" onclick="closeModal('modal-restock')">Cancel</button>
+        <button class="quick-btn quick-btn-primary" id="btn-submit-restock">Update Stock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. BOOK TABLE MODAL -->
+  <div class="modal-backdrop" id="modal-reserve">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Book a Dining Table</h3>
+        <span class="modal-close-btn" onclick="closeModal('modal-reserve')">&times;</span>
+      </div>
+      <div class="modal-body">
+        <form id="form-reserve" style="display: flex; flex-direction: column; gap: 14px;">
+          <div>
+            <label class="form-label" for="res-customer-select">Customer</label>
+            <select id="res-customer-select" class="form-control" required></select>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label class="form-label" for="res-table-select">Table</label>
+              <select id="res-table-select" class="form-control" required></select>
+            </div>
+            <div>
+              <label class="form-label" for="res-party-size">Party Size (Guests)</label>
+              <input type="number" id="res-party-size" class="form-control" value="2" min="1" max="12" required>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label class="form-label" for="res-date">Date</label>
+              <input type="date" id="res-date" class="form-control" required>
+            </div>
+            <div>
+              <label class="form-label" for="res-time">Arrival Time</label>
+              <input type="time" id="res-time" class="form-control" value="19:30" required>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="quick-btn quick-btn-outline" onclick="closeModal('modal-reserve')">Cancel</button>
+        <button class="quick-btn quick-btn-primary" id="btn-submit-reservation">Confirm Booking</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. REGISTER CUSTOMER MODAL -->
+  <div class="modal-backdrop" id="modal-add-customer">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Register Customer</h3>
+        <span class="modal-close-btn" onclick="closeModal('modal-add-customer')">&times;</span>
+      </div>
+      <div class="modal-body">
+        <form id="form-add-customer" style="display: flex; flex-direction: column; gap: 14px;">
+          <div>
+            <label class="form-label" for="cust-name">Full Name</label>
+            <input type="text" id="cust-name" class="form-control" required placeholder="e.g. Maya Patel">
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label class="form-label" for="cust-phone">Phone Number</label>
+              <input type="tel" id="cust-phone" class="form-control" required placeholder="9876543210">
+            </div>
+            <div>
+              <label class="form-label" for="cust-email">Email Address</label>
+              <input type="email" id="cust-email" class="form-control" placeholder="maya.patel@gmail.com">
+            </div>
+          </div>
+          <div>
+            <label class="form-label" for="cust-address">Address / City</label>
+            <input type="text" id="cust-address" class="form-control" placeholder="e.g. Indiranagar, Bangalore">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="quick-btn quick-btn-outline" onclick="closeModal('modal-add-customer')">Cancel</button>
+        <button class="quick-btn quick-btn-primary" id="btn-submit-add-customer">Save Customer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. GLOBAL LOGIN / REGISTRATION MODAL -->
+  <div class="modal-backdrop" id="modal-auth">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-auth-title">🔐 System Authentication</h3>
+        <span class="modal-close-btn" onclick="closeModal('modal-auth')">&times;</span>
+      </div>
+      <div class="modal-body">
+        <!-- Tab selector inside modal -->
+        <div class="auth-tabs-bar" style="margin-bottom: 16px;">
+          <button type="button" class="auth-tab-btn active" id="modal-tab-login">Sign In</button>
+          <button type="button" class="auth-tab-btn" id="modal-tab-register">Register Account</button>
+        </div>
+
+        <!-- Modal Sign In Form -->
+        <form id="modal-form-login" style="display: flex; flex-direction: column; gap: 14px;">
+          <div>
+            <label class="form-label" for="modal-login-user">Username or Email</label>
+            <input type="text" id="modal-login-user" class="form-control" placeholder="admin or admin@velvetbean.com" required>
+          </div>
+          <div>
+            <label class="form-label" for="modal-login-pass">Password</label>
+            <input type="password" id="modal-login-pass" class="form-control" placeholder="••••••••" required>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="pill-btn" id="modal-btn-admin-fill">Fill Admin</button>
+            <button type="button" class="pill-btn" id="modal-btn-staff-fill">Fill Staff</button>
+          </div>
+          <button type="submit" class="quick-btn quick-btn-primary" style="margin-top: 6px; width: 100%;">Sign In</button>
+        </form>
+
+        <!-- Modal Register Form -->
+        <form id="modal-form-register" style="display: none; flex-direction: column; gap: 14px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <label class="form-label" for="modal-reg-user">Username</label>
+              <input type="text" id="modal-reg-user" class="form-control" placeholder="e.g. chef_karan" required>
+            </div>
+            <div>
+              <label class="form-label" for="modal-reg-name">Full Name</label>
+              <input type="text" id="modal-reg-name" class="form-control" placeholder="e.g. Karan Rao" required>
+            </div>
+          </div>
+          <div>
+            <label class="form-label" for="modal-reg-email">Email</label>
+            <input type="email" id="modal-reg-email" class="form-control" placeholder="karan@velvetbean.com" required>
+          </div>
+          <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 12px;">
+            <div>
+              <label class="form-label" for="modal-reg-pass">Password</label>
+              <input type="password" id="modal-reg-pass" class="form-control" placeholder="Min. 4 chars" minlength="4" required>
+            </div>
+            <div>
+              <label class="form-label" for="modal-reg-role">Role</label>
+              <select id="modal-reg-role" class="form-control">
+                <option value="Staff">Staff</option>
+                <option value="Manager">Manager</option>
+                <option value="Cashier">Cashier</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="quick-btn quick-btn-primary" style="margin-top: 6px; width: 100%;">Create Account (Register)</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="quick-btn quick-btn-outline" onclick="closeModal('modal-auth')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Core JavaScript Application -->
+  <script src="app.js"></script>
+</body>
+</html>
